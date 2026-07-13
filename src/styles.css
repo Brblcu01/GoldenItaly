@@ -272,8 +272,9 @@ footer > * { position: relative; z-index: 1; }
 
 @media (max-width: 960px) {
   .site-header { height: 82px; padding-inline: 5vw; }
+  .wordmark, .nav-toggle { position: relative; z-index: 41; }
   .nav-toggle { display: inline-flex; color: white; }
-  .main-nav { position: fixed; z-index: -1; inset: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1.1rem; padding: 15vh 9vw; color: var(--paper); background: #291c16; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .35s,visibility .35s; }
+  .main-nav { position: fixed; z-index: 40; inset: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1.1rem; padding: 15vh 9vw; color: var(--paper); background: #291c16; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .35s,visibility .35s; }
   .main-nav.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
   .main-nav > a { font: 400 8vw/1 var(--serif); letter-spacing: -.03em; text-transform: none; }
   .main-nav .nav-reserve { margin-top: 2rem; font: 500 .75rem 'DM Sans'; letter-spacing: .1em; text-transform: uppercase; }

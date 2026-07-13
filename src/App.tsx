@@ -46,16 +46,22 @@ function useSmoothAnchorNavigation(scope: RefObject<HTMLElement>) {
       const target = document.querySelector<HTMLElement>(hash)
       if (!target) return
       event.preventDefault()
-      const destination = target.getBoundingClientRect().top + window.scrollY
-      const distance = Math.abs(window.scrollY - destination)
-      const duration = gsap.utils.clamp(.65, 1.25, distance / 1400)
-      gsap.to(window, {
-        scrollTo: { y: destination, autoKill: true },
-        duration,
-        ease: 'power3.inOut',
-        overwrite: 'auto',
-      })
-      window.history.replaceState(null, '', hash)
+      const fromMobileMenu = Boolean(anchor.closest('.main-nav'))
+      document.body.classList.remove('nav-open')
+      const navigate = () => {
+        const destination = target.getBoundingClientRect().top + window.scrollY
+        const distance = Math.abs(window.scrollY - destination)
+        const duration = gsap.utils.clamp(.65, 1.25, distance / 1400)
+        gsap.to(window, {
+          scrollTo: { y: destination, autoKill: true },
+          duration,
+          ease: 'power3.inOut',
+          overwrite: 'auto',
+        })
+        window.history.replaceState(null, '', hash)
+      }
+      if (fromMobileMenu) requestAnimationFrame(() => requestAnimationFrame(navigate))
+      else navigate()
     }
     root.addEventListener('click', onClick)
     return () => root.removeEventListener('click', onClick)
@@ -144,13 +150,17 @@ function Header() {
     document.body.classList.toggle('nav-open', open)
     return () => document.body.classList.remove('nav-open')
   }, [open])
+  const closeMenu = () => {
+    document.body.classList.remove('nav-open')
+    setOpen(false)
+  }
   return (
     <header className="site-header">
       <a className="wordmark" href="#top" aria-label="Golden Italy, torna all'inizio"><span>Golden</span><span>Italy</span></a>
       <button className="nav-toggle" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="main-nav"><span>{open ? 'Chiudi' : 'Esplora'}</span>{open ? <X /> : <Menu />}</button>
       <nav className={open ? 'main-nav is-open' : 'main-nav'} id="main-nav" aria-label="Navigazione principale">
-        <a href="#storia" onClick={() => setOpen(false)}>Atmosfera</a><a href="#tavola" onClick={() => setOpen(false)}>La tavola</a><a href="#piatti" onClick={() => setOpen(false)}>Piatti</a><a href="#visita" onClick={() => setOpen(false)}>Visita</a>
-        <a className="nav-reserve" href={restaurant.phoneHref}>Prenota <ArrowUpRight /></a>
+        <a href="#atmosfera" onClick={closeMenu}>Atmosfera</a><a href="#tavola" onClick={closeMenu}>La tavola</a><a href="#piatti" onClick={closeMenu}>Piatti</a><a href="#visita" onClick={closeMenu}>Visita</a>
+        <a className="nav-reserve" href={restaurant.phoneHref} onClick={closeMenu}>Prenota <ArrowUpRight /></a>
       </nav>
     </header>
   )
@@ -294,7 +304,7 @@ function Room() {
       animations.forEach((animation) => animation.cancel())
     }
   }, [])
-  return <section ref={roomRef} className="room section-pad"><div className="room-copy"><Overline>L’atmosfera</Overline><h2 data-reveal>Calore italiano,<br /><em>anima di mare.</em></h2><p data-reveal>Materiali avvolgenti, luce morbida, conversazioni che riempiono la stanza. Il nostro racconto parte dallo spazio e arriva alla tavola.</p></div><div className="room-visual image-window"><div className="scene scene-room"><img className="scene-photo dining-photo" src={interiors.diningRoom} alt="La sala interna di Golden Italy apparecchiata per la sera" loading="lazy" decoding="async" /></div><span className="room-reveal-wash" aria-hidden="true" /><span className="caption">Golden hour, ogni sera</span></div></section>
+  return <section ref={roomRef} className="room section-pad" id="atmosfera"><div className="room-copy"><Overline>L’atmosfera</Overline><h2 data-reveal>Calore italiano,<br /><em>anima di mare.</em></h2><p data-reveal>Materiali avvolgenti, luce morbida, conversazioni che riempiono la stanza. Il nostro racconto parte dallo spazio e arriva alla tavola.</p></div><div className="room-visual image-window"><div className="scene scene-room"><img className="scene-photo dining-photo" src={interiors.diningRoom} alt="La sala interna di Golden Italy apparecchiata per la sera" loading="lazy" decoding="async" /></div><span className="room-reveal-wash" aria-hidden="true" /><span className="caption">Golden hour, ogni sera</span></div></section>
 }
 
 function TableSection() {
@@ -444,7 +454,7 @@ function Footer() {
       </div>
 
       <nav className="footer-directory" aria-label="Navigazione a piè di pagina">
-        <div><span>Esplora</span><a href="#storia">Atmosfera</a><a href="#tavola">La tavola</a><a href="#piatti">Piatti</a><a href="#recensioni">Recensioni</a></div>
+        <div><span>Esplora</span><a href="#atmosfera">Atmosfera</a><a href="#tavola">La tavola</a><a href="#piatti">Piatti</a><a href="#recensioni">Recensioni</a></div>
         <div><span>Vieni a trovarci</span><a href={restaurant.phoneHref}>Prenota per telefono <ArrowUpRight /></a><a href={restaurant.directionsHref} target="_blank" rel="noreferrer">Indicazioni stradali <ArrowUpRight /></a><a href="#visita">Informazioni visita</a></div>
         <div><span>Online</span><a href={restaurant.tripadvisorHref} target="_blank" rel="noreferrer">Tripadvisor <ArrowUpRight /></a><a href="#top">Torna all’inizio ↑</a></div>
       </nav>

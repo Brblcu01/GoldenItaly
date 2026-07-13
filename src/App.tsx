@@ -45,8 +45,12 @@ function useSmoothAnchorNavigation(scope: RefObject<HTMLElement>) {
       if (!hash || hash === '#') return
       const target = document.querySelector<HTMLElement>(hash)
       if (!target) return
+      const fromMobileMenu = window.matchMedia('(max-width: 960px)').matches && Boolean(anchor.closest('.main-nav'))
+      if (fromMobileMenu) {
+        document.body.classList.remove('nav-open')
+        return
+      }
       event.preventDefault()
-      const fromMobileMenu = Boolean(anchor.closest('.main-nav'))
       document.body.classList.remove('nav-open')
       const navigate = () => {
         const destination = target.getBoundingClientRect().top + window.scrollY
@@ -60,8 +64,7 @@ function useSmoothAnchorNavigation(scope: RefObject<HTMLElement>) {
         })
         window.history.replaceState(null, '', hash)
       }
-      if (fromMobileMenu) requestAnimationFrame(() => requestAnimationFrame(navigate))
-      else navigate()
+      navigate()
     }
     root.addEventListener('click', onClick)
     return () => root.removeEventListener('click', onClick)

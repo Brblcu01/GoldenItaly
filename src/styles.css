@@ -87,13 +87,12 @@ h2 em { color: var(--wine); font-weight: 400; }
 .welcome-shot { position: relative; min-width: 0; margin: 0; overflow: hidden; background: #2c2119; }
 .welcome-shot > div { position: absolute; inset: 0; overflow: hidden; }
 .welcome-shot img { width: 100%; height: 116%; margin-top: -8%; object-fit: cover; }
-.welcome-shot::before { content: ''; position: absolute; z-index: 2; inset: 0; pointer-events: none; opacity: var(--reveal-wash,0); background: linear-gradient(135deg,#eee5d8 0%,#c7ae8d 54%,#7c5c43 100%); }
 .welcome-shot::after { content: ''; position: absolute; z-index: 1; inset: 0; pointer-events: none; background: linear-gradient(0deg,rgba(18,11,7,.46),transparent 42%); }
 .welcome-exterior { grid-row: 1 / 3; }
 .welcome-exterior img { object-position: 50% 54%; }
 .welcome-dining img { object-position: 51% 52%; }
 .welcome-counter img { object-position: 58% 54%; }
-.welcome-shot figcaption { position: absolute; z-index: 3; right: 1.2rem; bottom: 1rem; color: rgba(255,255,255,.86); font-size: .56rem; letter-spacing: .13em; text-transform: uppercase; }
+.welcome-shot figcaption { position: absolute; z-index: 2; right: 1.2rem; bottom: 1rem; color: rgba(255,255,255,.86); font-size: .56rem; letter-spacing: .13em; text-transform: uppercase; }
 .welcome-gallery blockquote { position: absolute; z-index: 3; left: 2.2rem; bottom: 2rem; max-width: 520px; margin: 0; color: white; font: 400 clamp(1.7rem,3vw,3.2rem)/1.03 var(--serif); }
 .welcome-gallery blockquote em { color: #edc67f; }
 
@@ -113,6 +112,7 @@ h2 em { color: var(--wine); font-weight: 400; }
 .scene-room { position: absolute; inset: 0; background: #39271d; }
 .scene-room .scene-photo { inset: 0; width: 100%; height: 100%; }
 .scene-room::after { content: ''; position: absolute; z-index: 1; inset: 0; pointer-events: none; background: linear-gradient(180deg,rgba(24,16,10,.08),rgba(21,14,9,.58)); }
+.room-reveal-wash { position: absolute; z-index: 3; inset: 0; pointer-events: none; opacity: 0; background: linear-gradient(135deg,#eee5d8 0%,#c7ae8d 52%,#704b36 100%); }
 .dining-photo { object-position: 50% 52%; }
 .caption { position: absolute; z-index: 4; right: 1.2rem; bottom: 1.2rem; color: white; font: italic 1.05rem var(--serif); }
 

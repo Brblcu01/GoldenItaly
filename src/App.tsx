@@ -73,18 +73,6 @@ function useCinematicMotion(scope: RefObject<HTMLElement>) {
       const { isMobile, reduceMotion } = context.conditions as { isMobile: boolean; reduceMotion: boolean }
       if (reduceMotion) {
         gsap.set('[data-reveal], [data-hero-line], .review-card, .dish-card, .footer-mark span', { clearProps: 'all' })
-        gsap.fromTo('.welcome-shot',
-          { autoAlpha: 0, '--reveal-wash': 1 },
-          {
-            autoAlpha: 1,
-            '--reveal-wash': 0,
-            duration: .75,
-            stagger: .08,
-            ease: 'power1.out',
-            immediateRender: true,
-            scrollTrigger: { trigger: '.welcome-gallery', start: 'top 64%', toggleActions: 'restart none none reset' },
-          },
-        )
         return
       }
 
@@ -101,32 +89,16 @@ function useCinematicMotion(scope: RefObject<HTMLElement>) {
 
       gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((node) => {
         if (node.closest('.table-overlay') || node.closest('.visit-panel') || node.closest('.room-copy') || node.closest('.dish-heading') || node.closest('.reviews-heading')) return
-        if (node.closest('.welcome-head')) {
-          gsap.from(node, {
-            y: isMobile ? 20 : 32,
-            filter: 'blur(10px)',
-            clipPath: 'inset(0 0 18% 0)',
-            duration: isMobile ? .82 : 1.05,
-            ease: 'power3.out',
-            immediateRender: true,
-            onComplete: () => gsap.set(node, { clearProps: 'transform,filter,clipPath' }),
-            scrollTrigger: { trigger: node, start: 'top 86%', once: true },
-          })
-          return
-        }
         gsap.from(node, { y: isMobile ? 24 : 38, duration: isMobile ? .72 : .95, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set(node, { clearProps: 'transform' }), scrollTrigger: { trigger: node, start: 'top 84%', once: true } })
       })
 
-      const welcomeTimeline = gsap.timeline({ scrollTrigger: { trigger: '.welcome-gallery', start: 'top 64%', toggleActions: 'restart none none reset' } })
+      const welcomeTimeline = gsap.timeline({ scrollTrigger: { trigger: '.welcome-gallery', start: 'top 78%', once: true } })
       welcomeTimeline
-        .fromTo('.welcome-shot', { '--reveal-wash': 1 }, { '--reveal-wash': 0, duration: 1.35, stagger: .12, ease: 'power2.out', immediateRender: true }, 0)
-        .from('.welcome-exterior', { autoAlpha: 0, x: isMobile ? 0 : -34, y: isMobile ? 24 : 0, scale: 1.035, filter: 'blur(14px) brightness(.78) saturate(.72)', duration: 1.25, ease: 'power3.out', immediateRender: true, willChange: 'transform,filter,opacity' }, 0)
-        .from('.welcome-exterior img', { scale: 1.08, filter: 'blur(7px)', duration: 1.4, ease: 'power3.out', immediateRender: true, willChange: 'transform,filter' }, '<')
-        .from('.welcome-dining, .welcome-counter', { autoAlpha: 0, y: isMobile ? 24 : 34, scale: 1.025, filter: 'blur(11px) brightness(.84) saturate(.78)', duration: 1.02, stagger: .14, ease: 'power3.out', immediateRender: true, willChange: 'transform,filter,opacity' }, '-=.76')
-        .from('.welcome-dining img, .welcome-counter img', { scale: 1.065, filter: 'blur(6px)', duration: 1.15, stagger: .14, ease: 'power3.out', immediateRender: true, willChange: 'transform,filter' }, '<')
-        .from('.welcome-gallery blockquote', { y: 26, filter: 'blur(7px)', clipPath: 'inset(0 0 100% 0)', duration: .92, ease: 'power3.out', immediateRender: true, willChange: 'transform,filter,clip-path' }, '-=.58')
-        .from('.welcome-shot figcaption', { x: 16, filter: 'blur(5px)', duration: .58, stagger: .09, ease: 'power2.out', immediateRender: true, willChange: 'transform,filter' }, '-=.52')
-        .eventCallback('onComplete', () => gsap.set('.welcome-shot, .welcome-shot img, .welcome-gallery blockquote, .welcome-shot figcaption', { clearProps: 'transform,opacity,visibility,filter,clipPath,willChange' }))
+        .from('.welcome-exterior', { x: isMobile ? 0 : -42, y: isMobile ? 28 : 0, duration: 1, ease: 'power3.out', immediateRender: true })
+        .from('.welcome-dining, .welcome-counter', { y: 38, duration: .85, stagger: .12, ease: 'power3.out', immediateRender: true }, '-=.62')
+        .from('.welcome-gallery blockquote', { y: 30, duration: .8, ease: 'power3.out', immediateRender: true }, '-=.48')
+        .from('.welcome-shot figcaption', { x: 18, duration: .5, stagger: .08, ease: 'power2.out', immediateRender: true }, '-=.5')
+        .eventCallback('onComplete', () => gsap.set('.welcome-shot, .welcome-gallery blockquote, .welcome-shot figcaption', { clearProps: 'transform' }))
 
       gsap.from('.welcome-tags span', { y: 16, stagger: .08, duration: .58, ease: 'power2.out', immediateRender: true, onComplete: () => gsap.set('.welcome-tags span', { clearProps: 'transform' }), scrollTrigger: { trigger: '.welcome-tags', start: 'top 86%', once: true } })
 
@@ -139,12 +111,6 @@ function useCinematicMotion(scope: RefObject<HTMLElement>) {
       gsap.utils.toArray<HTMLElement>('.dish-card').forEach((card, index) => {
         gsap.from(card, { x: isMobile ? 0 : index % 2 === 0 ? -34 : 34, y: isMobile ? 26 : 30, duration: .95, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set(card, { clearProps: 'transform' }), scrollTrigger: { trigger: card, start: 'top 82%', once: true } })
       })
-
-      const reviewTimeline = gsap.timeline({ scrollTrigger: { trigger: '.reviews', start: 'top 76%', once: true } })
-      reviewTimeline
-        .from('.reviews-heading > *', { y: 30, duration: .85, stagger: .1, ease: 'power3.out', immediateRender: true })
-        .from('.review-card', { y: 34, duration: .82, stagger: .08, ease: 'power3.out', immediateRender: true }, '-=.42')
-        .eventCallback('onComplete', () => gsap.set('.reviews-heading > *, .review-card', { clearProps: 'transform' }))
 
       gsap.from('.footer-mark span', { yPercent: 14, stagger: .1, duration: 1, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set('.footer-mark span', { clearProps: 'transform' }), scrollTrigger: { trigger: 'footer', start: 'top 78%', once: true } })
       gsap.from('.footer-topline > *, .footer-directory > *, .footer-contact > *', { y: 20, stagger: .055, duration: .68, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set('.footer-topline > *, .footer-directory > *, .footer-contact > *', { clearProps: 'transform' }), scrollTrigger: { trigger: 'footer', start: 'top 78%', once: true } })
@@ -234,23 +200,101 @@ function Room() {
     if (!section) return
     const copy = section.querySelector<HTMLElement>('.room-copy')
     const visual = section.querySelector<HTMLElement>('.room-visual')
+    const image = section.querySelector<HTMLElement>('.room-visual img')
+    const caption = section.querySelector<HTMLElement>('.room-visual .caption')
+    const wash = section.querySelector<HTMLElement>('.room-reveal-wash')
     const line = section.querySelector<HTMLElement>('.room-copy .overline > span')
-    const observer = new IntersectionObserver(([entry]) => {
+    const animations: Animation[] = []
+    const play = (target: HTMLElement | null, frames: Keyframe[], options: KeyframeAnimationOptions) => {
+      if (!target) return
+      animations.push(target.animate(frames, options))
+    }
+
+    if (copy) {
+      copy.style.transform = 'translate3d(-84px,0,0)'
+      copy.style.filter = 'blur(16px)'
+      copy.style.clipPath = 'inset(0 30% 0 0)'
+    }
+    if (visual) {
+      visual.style.opacity = '0'
+      visual.style.transform = 'translate3d(64px,0,0) scale(1.08)'
+      visual.style.filter = 'blur(24px) brightness(.52) saturate(.58)'
+      visual.style.clipPath = 'inset(10% 12% 10% 12%)'
+    }
+    if (image) {
+      image.style.transform = 'scale(1.15)'
+      image.style.filter = 'blur(11px)'
+    }
+    if (wash) wash.style.opacity = '1'
+    if (caption) {
+      caption.style.transform = 'translate3d(0,22px,0)'
+      caption.style.filter = 'blur(8px)'
+    }
+    if (line) {
+      line.style.transform = 'scaleX(0)'
+      line.style.transformOrigin = 'left center'
+    }
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const copyObserver = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return
-      observer.disconnect()
-      copy?.animate([
-        { transform: 'translate3d(-32px,0,0)' },
-        { transform: 'translate3d(0,0,0)' },
-      ], { duration: 620, easing: 'cubic-bezier(.22,1,.36,1)' })
-      line?.animate([
+      copyObserver.disconnect()
+      if (reducedMotion) {
+        play(copy, [
+          { transform: 'translate3d(-42px,0,0)', filter: 'blur(0)', clipPath: 'inset(0 12% 0 0)' },
+          { transform: 'translate3d(0,0,0)', filter: 'blur(0)', clipPath: 'inset(0 0 0 0)' },
+        ], { duration: 650, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' })
+      } else {
+        play(copy, [
+          { transform: 'translate3d(-84px,0,0)', filter: 'blur(16px)', clipPath: 'inset(0 30% 0 0)' },
+          { transform: 'translate3d(0,0,0)', filter: 'blur(0)', clipPath: 'inset(0 0 0 0)' },
+        ], { duration: 1350, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' })
+      }
+      play(line, [
         { transform: 'scaleX(0)', transformOrigin: 'left center' },
         { transform: 'scaleX(1)', transformOrigin: 'left center' },
-      ], { duration: 500, delay: 100, easing: 'cubic-bezier(.22,1,.36,1)' })
-    }, { threshold: .5 })
-    observer.observe(visual ?? section)
-    return () => observer.disconnect()
+      ], { duration: 650, delay: 220, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' })
+    }, { threshold: .01, rootMargin: '0px 0px -8% 0px' })
+
+    const visualObserver = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      visualObserver.disconnect()
+      if (reducedMotion) {
+        play(visual, [
+          { opacity: 0, transform: 'translate3d(28px,0,0) scale(1.02)', filter: 'blur(0)', clipPath: 'inset(3% 4% 3% 4%)' },
+          { opacity: 1, transform: 'translate3d(0,0,0) scale(1)', filter: 'blur(0)', clipPath: 'inset(0 0 0 0)' },
+        ], { duration: 800, easing: 'ease-out', fill: 'both' })
+        play(image, [{ transform: 'scale(1.03)', filter: 'blur(0)' }, { transform: 'scale(1)', filter: 'blur(0)' }], { duration: 850, easing: 'ease-out', fill: 'both' })
+        play(wash, [{ opacity: 1 }, { opacity: 0 }], { duration: 900, easing: 'ease-out', fill: 'both' })
+      } else {
+        play(visual, [
+          { opacity: 0, transform: 'translate3d(64px,0,0) scale(1.08)', filter: 'blur(24px) brightness(.52) saturate(.58)', clipPath: 'inset(10% 12% 10% 12%)' },
+          { opacity: 1, transform: 'translate3d(0,0,0) scale(1)', filter: 'blur(0) brightness(1) saturate(1)', clipPath: 'inset(0 0 0 0)' },
+        ], { duration: 1650, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' })
+        play(image, [
+          { transform: 'scale(1.15)', filter: 'blur(11px)' },
+          { transform: 'scale(1)', filter: 'blur(0)' },
+        ], { duration: 1900, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' })
+        play(wash, [
+          { opacity: 1 },
+          { opacity: 0 },
+        ], { duration: 1550, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' })
+        play(caption, [
+          { transform: 'translate3d(0,22px,0)', filter: 'blur(8px)' },
+          { transform: 'translate3d(0,0,0)', filter: 'blur(0)' },
+        ], { duration: 850, delay: 820, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' })
+      }
+    }, { threshold: .02, rootMargin: '0px 0px -5% 0px' })
+
+    copyObserver.observe(section)
+    visualObserver.observe(visual ?? section)
+    return () => {
+      copyObserver.disconnect()
+      visualObserver.disconnect()
+      animations.forEach((animation) => animation.cancel())
+    }
   }, [])
-  return <section ref={roomRef} className="room section-pad"><div className="room-copy"><Overline>L’atmosfera</Overline><h2 data-reveal>Calore italiano,<br /><em>anima di mare.</em></h2><p data-reveal>Materiali avvolgenti, luce morbida, conversazioni che riempiono la stanza. Il nostro racconto parte dallo spazio e arriva alla tavola.</p></div><div className="room-visual image-window"><div className="scene scene-room"><img className="scene-photo dining-photo" src={interiors.diningRoom} alt="La sala interna di Golden Italy apparecchiata per la sera" loading="lazy" decoding="async" /></div><span className="caption">Golden hour, ogni sera</span></div></section>
+  return <section ref={roomRef} className="room section-pad"><div className="room-copy"><Overline>L’atmosfera</Overline><h2 data-reveal>Calore italiano,<br /><em>anima di mare.</em></h2><p data-reveal>Materiali avvolgenti, luce morbida, conversazioni che riempiono la stanza. Il nostro racconto parte dallo spazio e arriva alla tavola.</p></div><div className="room-visual image-window"><div className="scene scene-room"><img className="scene-photo dining-photo" src={interiors.diningRoom} alt="La sala interna di Golden Italy apparecchiata per la sera" loading="lazy" decoding="async" /></div><span className="room-reveal-wash" aria-hidden="true" /><span className="caption">Golden hour, ogni sera</span></div></section>
 }
 
 function TableSection() {
@@ -264,7 +308,105 @@ function Dishes() {
 }
 
 function Reviews() {
-  return <section className="reviews section-pad" id="recensioni">
+  const reviewsRef = useRef<HTMLElement>(null)
+  useSafeLayoutEffect(() => {
+    const section = reviewsRef.current
+    if (!section) return
+    const grid = section.querySelector<HTMLElement>('.reviews-grid')
+    const cards = Array.from(section.querySelectorAll<HTMLElement>('.review-card'))
+    const headingParts = Array.from(section.querySelectorAll<HTMLElement>('.reviews-heading > *'))
+    if (!grid || cards.length === 0) return
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const isCarousel = window.matchMedia('(max-width: 960px)').matches
+    const revealOrder = [...cards]
+    if (!isCarousel) {
+      for (let index = revealOrder.length - 1; index > 0; index -= 1) {
+        const randomIndex = Math.floor(Math.random() * (index + 1))
+        ;[revealOrder[index], revealOrder[randomIndex]] = [revealOrder[randomIndex], revealOrder[index]]
+      }
+    }
+
+    const directions = new Map(cards.map((card) => [card, Math.random() < .5 ? -1 : 1]))
+    const animations: Animation[] = []
+    let disposed = false
+    const play = (
+      target: HTMLElement,
+      frames: Keyframe[],
+      options: KeyframeAnimationOptions,
+      finalStyles: Partial<CSSStyleDeclaration>,
+    ) => {
+      const animation = target.animate(frames, options)
+      animations.push(animation)
+      void animation.finished.then(() => {
+        if (disposed) return
+        Object.assign(target.style, finalStyles)
+        animation.cancel()
+      }).catch(() => undefined)
+    }
+
+    headingParts.forEach((part) => {
+      part.style.transform = 'translate3d(0,34px,0)'
+      part.style.filter = 'blur(10px)'
+      part.style.clipPath = 'inset(0 0 24% 0)'
+    })
+    cards.forEach((card) => {
+      const direction = directions.get(card) ?? 1
+      card.style.opacity = '0'
+      if (!reducedMotion) {
+        card.style.transform = `translate3d(${direction * 34}px,48px,0) scale(.94)`
+        card.style.filter = 'blur(18px) brightness(.72) saturate(.7)'
+        card.style.clipPath = 'inset(10% 8% 10% 8%)'
+      }
+    })
+
+    const headingObserver = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      headingObserver.disconnect()
+      headingParts.forEach((part, index) => {
+        play(part, [
+          { transform: 'translate3d(0,34px,0)', filter: 'blur(10px)', clipPath: 'inset(0 0 24% 0)' },
+          { transform: 'translate3d(0,0,0)', filter: 'blur(0)', clipPath: 'inset(0 0 0 0)' },
+        ], { duration: 900, delay: index * 110, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' }, {
+          transform: 'none', filter: 'none', clipPath: 'inset(0 0 0 0)',
+        })
+      })
+    }, { threshold: .01, rootMargin: '0px 0px 8% 0px' })
+
+    const cardsObserver = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      cardsObserver.disconnect()
+      revealOrder.forEach((card, index) => {
+        const direction = directions.get(card) ?? 1
+        const delay = index * (isCarousel ? 180 : 520)
+        const frames: Keyframe[] = reducedMotion
+          ? [{ opacity: 0 }, { opacity: 1 }]
+          : [
+              { opacity: 0, transform: `translate3d(${direction * 34}px,48px,0) scale(.94)`, filter: 'blur(18px) brightness(.72) saturate(.7)', clipPath: 'inset(10% 8% 10% 8%)' },
+              { opacity: 1, transform: 'translate3d(0,0,0) scale(1)', filter: 'blur(0) brightness(1) saturate(1)', clipPath: 'inset(0 0 0 0)' },
+            ]
+        play(card, frames, {
+          duration: reducedMotion ? 520 : 980,
+          delay,
+          easing: 'cubic-bezier(.16,1,.3,1)',
+          fill: 'both',
+        }, {
+          opacity: '1', transform: 'none', filter: 'none', clipPath: 'inset(0 0 0 0)',
+        })
+      })
+    }, { threshold: .01, rootMargin: '0px 0px 12% 0px' })
+
+    headingObserver.observe(section)
+    cardsObserver.observe(grid)
+    return () => {
+      disposed = true
+      headingObserver.disconnect()
+      cardsObserver.disconnect()
+      animations.forEach((animation) => animation.cancel())
+    }
+  }, [])
+
+  return <section ref={reviewsRef} className="reviews section-pad" id="recensioni">
     <div className="reviews-heading">
       <div><Overline>Dicono di noi</Overline><h2>Le parole<br />dopo <em>la tavola.</em></h2></div>
       <div className="reviews-intro"><p>Una selezione editoriale di recensioni a 4 e 5 stelle pubblicate dagli ospiti su Tripadvisor.</p><a className="reviews-link" href={restaurant.tripadvisorHref} target="_blank" rel="noreferrer">Tutte le recensioni su Tripadvisor <ArrowUpRight /></a></div>

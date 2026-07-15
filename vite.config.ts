@@ -3,29 +3,19 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '')
-  const siteUrl = (env.VITE_SITE_URL || env.URL || 'http://localhost:4173').replace(/\/$/, '')
+  const siteUrl = env.VITE_SITE_URL?.trim()
+
+  if (mode === 'production') {
+    if (!siteUrl) throw new Error('VITE_SITE_URL is required for a production build.')
+    if (!siteUrl.startsWith('https://')) throw new Error('VITE_SITE_URL must use HTTPS.')
+    if (/localhost|127\.0\.0\.1/i.test(siteUrl)) throw new Error('VITE_SITE_URL cannot use a local hostname in production.')
+    if (/\.netlify\.app$/i.test(new URL(siteUrl).hostname)) throw new Error('VITE_SITE_URL must use the definitive custom domain, not the Netlify subdomain.')
+    if (siteUrl.endsWith('/')) throw new Error('VITE_SITE_URL must not end with a slash.')
+    const parsed = new URL(siteUrl)
+    if (parsed.pathname !== '/' || parsed.search || parsed.hash) throw new Error('VITE_SITE_URL must contain only the canonical origin.')
+  }
 
   return {
-    plugins: [
-      react(),
-      {
-        name: 'golden-italy-seo',
-        transformIndexHtml(html: string) {
-          return html.split('%SITE_URL%').join(siteUrl)
-        },
-        generateBundle() {
-          this.emitFile({
-            type: 'asset',
-            fileName: 'robots.txt',
-            source: `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`,
-          })
-          this.emitFile({
-            type: 'asset',
-            fileName: 'sitemap.xml',
-            source: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>${siteUrl}/</loc>\n    <changefreq>monthly</changefreq>\n    <priority>1.0</priority>\n  </url>\n</urlset>\n`,
-          })
-        },
-      },
-    ],
+    plugins: [react()],
   }
 })

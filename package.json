@@ -5,9 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
+    "build": "npm run typecheck && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs && npm run seo:check && npm run structured-data:check",
     "preview": "vite preview",
-    "typecheck": "tsc -b --pretty false"
+    "typecheck": "tsc -b --pretty false",
+    "seo:check": "node scripts/seo-check.mjs",
+    "structured-data:check": "node scripts/structured-data-check.mjs",
+    "prerender:check": "node scripts/prerender-check.mjs",
+    "validate": "npm run typecheck && npm run build && npm run seo:check && npm run structured-data:check && npm run prerender:check"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

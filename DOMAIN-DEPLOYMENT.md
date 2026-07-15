@@ -30,6 +30,8 @@ In **Project configuration → Environment variables** creare:
 VITE_SITE_URL=https://HOSTNAME-CANONICO
 ```
 
+Finché non è disponibile un dominio personalizzato, è consentito usare temporaneamente l'URL di produzione assegnato da Netlify, per esempio `https://NOME-SITO.netlify.app`. Il valore non viene hardcodato nel repository. Quando sarà collegato il dominio definitivo, sostituire immediatamente la variabile con il nuovo origin canonico e avviare un nuovo deploy.
+
 Regole:
 
 - scope incluso: **Builds**;
@@ -60,6 +62,8 @@ npm run validate
 7. Controllare certificato HTTPS, mixed content e catena dei redirect con `curl.exe -I`.
 8. Aprire il sorgente pagina e verificare canonical, `og:url`, sitemap e JSON-LD sul dominio definitivo.
 
+Durante la fase temporanea, eseguire gli stessi controlli usando l'URL `*.netlify.app` configurato in `VITE_SITE_URL`. Non configurare ancora Search Console o directory aziendali come se quel sottodominio fosse il dominio definitivo.
+
 ## 5. Evitare la doppia indicizzazione
 
 - Impostare sempre il dominio personalizzato come Primary domain.
@@ -67,4 +71,3 @@ npm run validate
 - Controllare che l’URL Netlify di produzione non restituisca una copia indicizzabile separata.
 - Dopo il cambio dominio aggiornare Google Business Profile, Tripadvisor, Bing, Apple, social e Search Console.
 - Inviare a Search Console solo la sitemap del dominio canonico.
-

@@ -21,6 +21,7 @@ I principali limiti iniziali erano: una sola route reale, metadata condivisi nel
 - Generati automaticamente robots, sitemap con `lastmod` e manifest dalla configurazione di build.
 - Consentito `OAI-SearchBot` e bloccato `GPTBot` in modo conservativo.
 - Resa obbligatoria `VITE_SITE_URL` HTTPS in produzione.
+- Consentito temporaneamente un origin `*.netlify.app` configurato esplicitamente quando il dominio personalizzato non è ancora disponibile; il passaggio al dominio definitivo resta un'attività obbligatoria prima del lancio SEO.
 - Mantenuta la 404 statica senza redirect catch-all verso la homepage.
 - Implementati poster LCP, asset responsive, dimensioni immagini, caricamento progressivo hero, caricamento differito del video visita, risparmio dati e riduzione movimento.
 - Aggiunto adapter analytics inattivo per gli eventi di conversione richiesti.

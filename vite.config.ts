@@ -1,11 +1,11 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, '.', '')
   const siteUrl = env.VITE_SITE_URL?.trim()
 
-  if (mode === 'production') {
+  if (mode === 'production' && command === 'build') {
     if (!siteUrl) throw new Error('VITE_SITE_URL is required for a production build.')
     if (!siteUrl.startsWith('https://')) throw new Error('VITE_SITE_URL must use HTTPS.')
     if (/localhost|127\.0\.0\.1/i.test(siteUrl)) throw new Error('VITE_SITE_URL cannot use a local hostname in production.')

@@ -79,13 +79,13 @@ h2 em { color: var(--wine); font-weight: 400; }
 .hero-push { position: relative; isolation: isolate; background: var(--cream); }
 .hero-push > .hero { position: sticky; z-index: 0; top: 0; }
 .welcome { position: relative; z-index: 2; min-height: var(--page); overflow: visible; background: var(--cream); border-top: 1px solid rgba(112,99,83,.2); box-shadow: 0 -28px 80px rgba(18,12,8,.16); }
-.welcome-head { display: grid; grid-template-columns: .6fr 1.7fr .7fr; gap: 5vw; align-items: start; }
-.welcome-index { min-height: 18svh; display: flex; flex-direction: column; justify-content: space-between; }
+.welcome-head { display: grid; grid-template-columns: minmax(120px,.42fr) minmax(360px,1.75fr) minmax(280px,.9fr); gap: clamp(2rem,3.6vw,4.5rem); align-items: start; }
+.welcome-index { min-height: 16svh; display: flex; flex-direction: column; justify-content: space-between; }
 .welcome-head h2 { font-size: clamp(2.8rem,4.8vw,5.4rem); }
-.welcome-copy { align-self: end; padding-bottom: .6rem; }
-.welcome-copy > p { color: #655c51; font-size: clamp(.9rem,1.15vw,1.1rem); line-height: 1.72; }
-.welcome-tags { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin-top: 2rem; padding-top: 1.1rem; border-top: 1px solid #bcb1a2; color: #71675c; font-size: .58rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
-.welcome-gallery { position: relative; height: auto; aspect-ratio: 2.45 / 1; display: grid; grid-template-columns: minmax(0,1.85fr) minmax(260px,.65fr); grid-template-rows: repeat(2,minmax(0,1fr)); gap: 1rem; margin-top: 3svh; }
+.welcome-copy { width: 100%; max-width: 360px; align-self: start; padding: .35rem 0 0; }
+.welcome-copy > p { color: #655c51; font-size: clamp(.9rem,1.15vw,1.1rem); line-height: 1.58; }
+.welcome-tags { display: flex; flex-wrap: wrap; gap: .45rem .9rem; margin-top: 1.35rem; padding-top: .9rem; border-top: 1px solid #bcb1a2; color: #71675c; font-size: .58rem; font-weight: 600; line-height: 1.45; letter-spacing: .12em; text-transform: uppercase; }
+.welcome-gallery { position: relative; height: auto; aspect-ratio: 2.45 / 1; display: grid; grid-template-columns: minmax(0,1.85fr) minmax(260px,.65fr); grid-template-rows: repeat(2,minmax(0,1fr)); gap: 1rem; margin-top: clamp(2rem,4svh,3.5rem); }
 .welcome-shot { position: relative; min-width: 0; margin: 0; overflow: hidden; background: #2c2119; }
 .welcome-shot > div { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; background: #211a15; }
 .welcome-shot img { width: 100%; height: 100%; margin: 0; object-fit: contain; }
@@ -330,6 +330,17 @@ footer > * { position: relative; z-index: 1; }
   .footer-contact { padding-top: .7rem; }
 }
 
+@media (min-width: 961px) {
+  .welcome { min-height: 122svh; display: grid; grid-template-rows: auto clamp(470px,60svh,680px); align-content: start; row-gap: clamp(2rem,4.5svh,3.75rem); padding-block: clamp(3.5rem,7svh,6.5rem); }
+  .welcome-head { grid-template-columns: minmax(110px,.36fr) minmax(0,1.72fr) minmax(320px,.92fr); gap: clamp(1.75rem,2.8vw,3.5rem); }
+  .welcome-index { min-height: 100%; }
+  .welcome-head h2 { max-width: 720px; }
+  .welcome-copy { max-width: 380px; padding-top: .2rem; }
+  .welcome-copy > p { line-height: 1.5; }
+  .welcome-tags { margin-top: 1.1rem; padding-top: .8rem; }
+  .welcome-gallery { height: 100%; aspect-ratio: auto; margin-top: 0; }
+}
+
 @media (max-width: 960px) {
   .site-header { height: 82px; padding-inline: 5vw; }
   .wordmark, .nav-toggle { position: relative; z-index: 41; }
@@ -342,10 +353,11 @@ footer > * { position: relative; z-index: 1; }
   .hero h1 .italic { margin-left: 6vw; }
   .hero-support { margin-left: 6vw; }
   .hero-actions { margin-left: 6vw; }
-  .welcome-head { grid-template-columns: 1fr 2fr; }
+  .welcome { min-height: 115svh; }
+  .welcome-head { grid-template-columns: minmax(0,1.25fr) minmax(260px,.75fr); gap: 3vw; }
   .welcome-index { min-height: auto; flex-direction: row; grid-column: 1 / -1; }
-  .welcome-copy { padding-bottom: 0; }
-  .welcome-gallery { grid-template-columns: minmax(0,1.45fr) minmax(230px,.75fr); }
+  .welcome-copy { max-width: none; padding: 0; }
+  .welcome-gallery { min-height: 56svh; aspect-ratio: auto; grid-template-columns: minmax(0,1.45fr) minmax(230px,.75fr); }
   .room { grid-template-columns: .8fr 1.2fr; gap: 4vw; }
   .room-visual { height: 66svh; }
   .table-overlay { grid-template-columns: 50px minmax(0,620px); }
@@ -393,15 +405,16 @@ footer > * { position: relative; z-index: 1; }
   .scroll-cue { display: none; }
   .section-pad { padding: 4svh 1.25rem; }
   h2 { font-size: clamp(3.1rem,15vw,5rem); }
+  .welcome { min-height: 110svh; padding-block: 6svh; }
   .welcome-head { grid-template-columns: 1fr; gap: 1.2svh; }
   .welcome-index { grid-column: auto; }
   .welcome-head h2 { font-size: clamp(2.5rem,11vw,3.7rem); }
   .welcome-copy > p { max-width: 33rem; font-size: clamp(.9rem,3.8vw,1rem); line-height: 1.5; }
   .welcome-tags { margin-top: .8rem; padding-top: .7rem; }
-  .welcome-gallery { height: auto; aspect-ratio: auto; grid-template-columns: repeat(2,minmax(0,1fr)); grid-template-rows: auto auto; gap: .65rem; margin-top: 2svh; }
-  .welcome-exterior { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 16 / 9; }
-  .welcome-dining, .welcome-counter { grid-row: 2; aspect-ratio: 4 / 3; }
-  .welcome-gallery blockquote { left: 1.1rem; right: 1.1rem; bottom: calc(16svh + 1.4rem); max-width: 310px; font-size: clamp(1.5rem,7vw,2.2rem); }
+  .welcome-gallery { height: clamp(430px,62svh,560px); aspect-ratio: auto; grid-template-columns: repeat(2,minmax(0,1fr)); grid-template-rows: minmax(0,1.55fr) minmax(0,1fr); gap: .65rem; margin-top: 3svh; }
+  .welcome-exterior { grid-column: 1 / -1; grid-row: 1; aspect-ratio: auto; }
+  .welcome-dining, .welcome-counter { grid-row: 2; aspect-ratio: auto; }
+  .welcome-gallery blockquote { left: 1.1rem; right: 1.1rem; bottom: calc(40% + 1.2rem); max-width: 310px; font-size: clamp(1.5rem,7vw,2.2rem); }
   .welcome-shot figcaption { right: .7rem; bottom: .65rem; font-size: .49rem; }
   .welcome-exterior figcaption { top: .8rem; bottom: auto; }
   .scene-wrap { height: 82vh; padding: 0 1.25rem 4rem; }

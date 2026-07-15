@@ -64,9 +64,10 @@ function useSmoothAnchorNavigation(scope: RefObject<HTMLElement>) {
       const destination = Math.max(0, target.getBoundingClientRect().top + window.scrollY)
       const distance = Math.abs(destination - window.scrollY)
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const isMobile = window.matchMedia('(max-width: 768px)').matches
       scrollTween = gsap.to(window, {
         scrollTo: { y: destination, autoKill: false },
-        duration: reduceMotion ? .55 : gsap.utils.clamp(1.05, 1.65, distance / 1100),
+        duration: reduceMotion ? .35 : isMobile ? gsap.utils.clamp(.65, .95, distance / 1500) : gsap.utils.clamp(1.05, 1.65, distance / 1100),
         ease: reduceMotion ? 'power1.inOut' : 'power3.inOut',
         overwrite: true,
         onComplete: () => {
@@ -135,42 +136,51 @@ function useCinematicMotion(scope: RefObject<HTMLElement>, enabled: boolean) {
 
       const heroIntro = gsap.timeline({ defaults: { ease: 'power3.out' } })
       heroIntro
-        .from('.hero h1 [data-hero-line]', { yPercent: 108, duration: 1.05, stagger: .1 })
-        .from('.hero-kicker, .hero-actions', { y: 16, duration: .65, stagger: .08 }, '-=.55')
+        .from('.hero h1 [data-hero-line]', { yPercent: isMobile ? 55 : 108, duration: isMobile ? .62 : 1.05, stagger: isMobile ? .055 : .1 })
+        .from('.hero-kicker, .hero-actions', { y: isMobile ? 8 : 16, duration: isMobile ? .38 : .65, stagger: isMobile ? .04 : .08 }, isMobile ? '-=.3' : '-=.55')
         .eventCallback('onComplete', () => gsap.set('.hero h1 [data-hero-line], .hero-kicker, .hero-actions', { clearProps: 'transform' }))
 
-      gsap.timeline({ scrollTrigger: { trigger: '.hero-push', start: 'top top', end: () => `+=${window.innerHeight}`, scrub: .8, invalidateOnRefresh: true } })
-        .to('.hero-copy', { yPercent: isMobile ? 5 : 10, ease: 'none' }, 0)
-        .to('.hero-shade', { opacity: .72, ease: 'none' }, 0)
-        .to('.hero-index, .scroll-cue', { y: 22, opacity: 0, ease: 'none' }, 0)
+      if (!isMobile) {
+        gsap.timeline({ scrollTrigger: { trigger: '.hero-push', start: 'top top', end: () => `+=${window.innerHeight}`, scrub: .8, invalidateOnRefresh: true } })
+          .to('.hero-copy', { yPercent: 10, ease: 'none' }, 0)
+          .to('.hero-shade', { opacity: .72, ease: 'none' }, 0)
+          .to('.hero-index, .scroll-cue', { y: 22, opacity: 0, ease: 'none' }, 0)
+      }
 
       gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((node) => {
         if (node.closest('.table-overlay') || node.closest('.visit-panel') || node.closest('.room-copy') || node.closest('.dish-heading') || node.closest('.reviews-heading')) return
-        gsap.from(node, { y: isMobile ? 24 : 38, duration: isMobile ? .72 : .95, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set(node, { clearProps: 'transform' }), scrollTrigger: { trigger: node, start: 'top 84%', once: true } })
+        if (isMobile && node.matches('.overline')) return
+        gsap.from(node, { y: isMobile ? 12 : 38, duration: isMobile ? .42 : .95, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set(node, { clearProps: 'transform' }), scrollTrigger: { trigger: node, start: 'top 86%', once: true } })
       })
 
-      const welcomeTimeline = gsap.timeline({ scrollTrigger: { trigger: '.welcome-gallery', start: 'top 78%', once: true } })
-      welcomeTimeline
-        .from('.welcome-exterior', { x: isMobile ? 0 : -42, y: isMobile ? 28 : 0, duration: 1, ease: 'power3.out', immediateRender: true })
-        .from('.welcome-dining, .welcome-counter', { y: 38, duration: .85, stagger: .12, ease: 'power3.out', immediateRender: true }, '-=.62')
-        .from('.welcome-gallery blockquote', { y: 30, duration: .8, ease: 'power3.out', immediateRender: true }, '-=.48')
-        .from('.welcome-shot figcaption', { x: 18, duration: .5, stagger: .08, ease: 'power2.out', immediateRender: true }, '-=.5')
-        .eventCallback('onComplete', () => gsap.set('.welcome-shot, .welcome-gallery blockquote, .welcome-shot figcaption', { clearProps: 'transform' }))
-
-      gsap.from('.welcome-tags span', { y: 16, stagger: .08, duration: .58, ease: 'power2.out', immediateRender: true, onComplete: () => gsap.set('.welcome-tags span', { clearProps: 'transform' }), scrollTrigger: { trigger: '.welcome-tags', start: 'top 86%', once: true } })
+      if (isMobile) {
+        gsap.from('.welcome-shot', { y: 12, opacity: 0, duration: .45, stagger: .05, ease: 'power2.out', immediateRender: true, onComplete: () => gsap.set('.welcome-shot', { clearProps: 'transform,opacity' }), scrollTrigger: { trigger: '.welcome-gallery', start: 'top 86%', once: true } })
+      } else {
+        const welcomeTimeline = gsap.timeline({ scrollTrigger: { trigger: '.welcome-gallery', start: 'top 78%', once: true } })
+        welcomeTimeline
+          .from('.welcome-exterior', { x: -42, duration: 1, ease: 'power3.out', immediateRender: true })
+          .from('.welcome-dining, .welcome-counter', { y: 38, duration: .85, stagger: .12, ease: 'power3.out', immediateRender: true }, '-=.62')
+          .from('.welcome-gallery blockquote', { y: 30, duration: .8, ease: 'power3.out', immediateRender: true }, '-=.48')
+          .from('.welcome-shot figcaption', { x: 18, duration: .5, stagger: .08, ease: 'power2.out', immediateRender: true }, '-=.5')
+          .eventCallback('onComplete', () => gsap.set('.welcome-shot, .welcome-gallery blockquote, .welcome-shot figcaption', { clearProps: 'transform' }))
+        gsap.from('.welcome-tags span', { y: 16, stagger: .08, duration: .58, ease: 'power2.out', immediateRender: true, onComplete: () => gsap.set('.welcome-tags span', { clearProps: 'transform' }), scrollTrigger: { trigger: '.welcome-tags', start: 'top 86%', once: true } })
+      }
 
       const dishHeadingTimeline = gsap.timeline({ scrollTrigger: { trigger: '.dish-heading', start: 'top 80%', once: true } })
       dishHeadingTimeline
-        .from('.dish-heading > div', { y: 34, duration: .9, ease: 'power3.out', immediateRender: true })
-        .from('.dish-heading > p', { y: 24, duration: .75, ease: 'power3.out', immediateRender: true }, '-=.5')
+        .from('.dish-heading > div', { y: isMobile ? 12 : 34, duration: isMobile ? .42 : .9, ease: 'power3.out', immediateRender: true })
+        .from('.dish-heading > p', { y: isMobile ? 8 : 24, duration: isMobile ? .36 : .75, ease: 'power3.out', immediateRender: true }, isMobile ? '-=.28' : '-=.5')
         .eventCallback('onComplete', () => gsap.set('.dish-heading > *', { clearProps: 'transform' }))
 
-      gsap.utils.toArray<HTMLElement>('.dish-card').forEach((card, index) => {
-        gsap.from(card, { x: isMobile ? 0 : index % 2 === 0 ? -34 : 34, y: isMobile ? 26 : 30, duration: .95, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set(card, { clearProps: 'transform' }), scrollTrigger: { trigger: card, start: 'top 82%', once: true } })
-      })
-
-      gsap.from('.footer-mark span', { yPercent: 14, stagger: .1, duration: 1, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set('.footer-mark span', { clearProps: 'transform' }), scrollTrigger: { trigger: 'footer', start: 'top 78%', once: true } })
-      gsap.from('.footer-topline > *, .footer-directory > *, .footer-contact > *', { y: 20, stagger: .055, duration: .68, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set('.footer-topline > *, .footer-directory > *, .footer-contact > *', { clearProps: 'transform' }), scrollTrigger: { trigger: 'footer', start: 'top 78%', once: true } })
+      if (!isMobile) {
+        gsap.utils.toArray<HTMLElement>('.dish-card').forEach((card, index) => {
+          gsap.from(card, { x: index % 2 === 0 ? -34 : 34, y: 30, duration: .95, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set(card, { clearProps: 'transform' }), scrollTrigger: { trigger: card, start: 'top 82%', once: true } })
+        })
+        gsap.from('.footer-mark span', { yPercent: 14, stagger: .1, duration: 1, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set('.footer-mark span', { clearProps: 'transform' }), scrollTrigger: { trigger: 'footer', start: 'top 78%', once: true } })
+        gsap.from('.footer-topline > *, .footer-directory > *, .footer-contact > *', { y: 20, stagger: .055, duration: .68, ease: 'power3.out', immediateRender: true, onComplete: () => gsap.set('.footer-topline > *, .footer-directory > *, .footer-contact > *', { clearProps: 'transform' }), scrollTrigger: { trigger: 'footer', start: 'top 78%', once: true } })
+      } else {
+        gsap.from('.footer-topline, .footer-main, .footer-contact', { y: 10, opacity: 0, stagger: .04, duration: .4, ease: 'power2.out', immediateRender: true, onComplete: () => gsap.set('.footer-topline, .footer-main, .footer-contact', { clearProps: 'transform,opacity' }), scrollTrigger: { trigger: 'footer', start: 'top 88%', once: true } })
+      }
     }, scope.current)
 
     const refresh = () => {
@@ -285,32 +295,33 @@ function Room() {
     const line = section.querySelector<HTMLElement>('.room-copy .overline > span')
     const animations: Animation[] = []
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
     const play = (target: HTMLElement | null, frames: Keyframe[], options: KeyframeAnimationOptions) => {
       if (!target) return
       animations.push(target.animate(frames, options))
     }
 
     if (copy) {
-      copy.style.transform = 'translate3d(-84px,0,0)'
-      copy.style.filter = 'blur(16px)'
-      copy.style.clipPath = 'inset(0 30% 0 0)'
+      copy.style.transform = isMobile ? 'translate3d(0,14px,0)' : 'translate3d(-84px,0,0)'
+      copy.style.filter = isMobile ? 'none' : 'blur(16px)'
+      copy.style.clipPath = isMobile ? 'none' : 'inset(0 30% 0 0)'
     }
     if (visual) {
       visual.style.opacity = '0'
-      visual.style.transform = 'translate3d(64px,0,0) scale(1.08)'
-      visual.style.filter = 'blur(24px) brightness(.52) saturate(.58)'
-      visual.style.clipPath = 'inset(10% 12% 10% 12%)'
+      visual.style.transform = isMobile ? 'translate3d(0,16px,0) scale(1.02)' : 'translate3d(64px,0,0) scale(1.08)'
+      visual.style.filter = isMobile ? 'none' : 'blur(24px) brightness(.52) saturate(.58)'
+      visual.style.clipPath = isMobile ? 'none' : 'inset(10% 12% 10% 12%)'
     }
-    if (image) {
+    if (image && !isMobile) {
       image.style.transform = 'scale(1.15)'
       image.style.filter = 'blur(11px)'
     }
-    if (wash) wash.style.opacity = '1'
-    if (caption) {
+    if (wash) wash.style.opacity = isMobile ? '0' : '1'
+    if (caption && !isMobile) {
       caption.style.transform = 'translate3d(0,22px,0)'
       caption.style.filter = 'blur(8px)'
     }
-    if (line) {
+    if (line && !isMobile) {
       line.style.transform = 'scaleX(0)'
       line.style.transformOrigin = 'left center'
     }
@@ -318,23 +329,30 @@ function Room() {
     const copyObserver = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return
       copyObserver.disconnect()
-      play(copy, [
+      play(copy, isMobile ? [
+          { transform: 'translate3d(0,14px,0)' },
+          { transform: 'translate3d(0,0,0)' },
+        ] : [
           { transform: 'translate3d(-84px,0,0)', filter: 'blur(16px)', clipPath: 'inset(0 30% 0 0)' },
           { transform: 'translate3d(0,0,0)', filter: 'blur(0)', clipPath: 'inset(0 0 0 0)' },
-        ], { duration: 1350, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' })
-      play(line, [
-        { transform: 'scaleX(0)', transformOrigin: 'left center' },
-        { transform: 'scaleX(1)', transformOrigin: 'left center' },
-      ], { duration: 650, delay: 220, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' })
+        ], { duration: isMobile ? 430 : 1350, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' })
+      if (!isMobile) play(line, [
+          { transform: 'scaleX(0)', transformOrigin: 'left center' },
+          { transform: 'scaleX(1)', transformOrigin: 'left center' },
+        ], { duration: 650, delay: 220, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' })
     }, { threshold: .01, rootMargin: '0px 0px -8% 0px' })
 
     const visualObserver = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return
       visualObserver.disconnect()
-      play(visual, [
+      play(visual, isMobile ? [
+          { opacity: 0, transform: 'translate3d(0,16px,0) scale(1.02)' },
+          { opacity: 1, transform: 'translate3d(0,0,0) scale(1)' },
+        ] : [
           { opacity: 0, transform: 'translate3d(64px,0,0) scale(1.08)', filter: 'blur(24px) brightness(.52) saturate(.58)', clipPath: 'inset(10% 12% 10% 12%)' },
           { opacity: 1, transform: 'translate3d(0,0,0) scale(1)', filter: 'blur(0) brightness(1) saturate(1)', clipPath: 'inset(0 0 0 0)' },
-        ], { duration: 1650, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' })
+        ], { duration: isMobile ? 480 : 1650, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' })
+      if (!isMobile) {
         play(image, [
           { transform: 'scale(1.15)', filter: 'blur(11px)' },
           { transform: 'scale(1)', filter: 'blur(0)' },
@@ -347,6 +365,7 @@ function Room() {
           { transform: 'translate3d(0,22px,0)', filter: 'blur(8px)' },
           { transform: 'translate3d(0,0,0)', filter: 'blur(0)' },
         ], { duration: 850, delay: 820, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' })
+      }
     }, { threshold: .02, rootMargin: '0px 0px -5% 0px' })
 
     copyObserver.observe(section)
@@ -382,6 +401,7 @@ function Reviews() {
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reducedMotion) return
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
     const isCarousel = window.matchMedia('(max-width: 960px)').matches
     const revealOrder = [...cards]
     if (!isCarousel) {
@@ -410,14 +430,16 @@ function Reviews() {
     }
 
     headingParts.forEach((part) => {
-      part.style.transform = 'translate3d(0,34px,0)'
-      part.style.filter = 'blur(10px)'
-      part.style.clipPath = 'inset(0 0 24% 0)'
+      part.style.transform = `translate3d(0,${isMobile ? 12 : 34}px,0)`
+      part.style.filter = isMobile ? 'none' : 'blur(10px)'
+      part.style.clipPath = isMobile ? 'none' : 'inset(0 0 24% 0)'
     })
     cards.forEach((card) => {
       const direction = directions.get(card) ?? 1
       card.style.opacity = '0'
-      if (!reducedMotion) {
+      if (isMobile) {
+        card.style.transform = 'translate3d(0,12px,0)'
+      } else {
         card.style.transform = `translate3d(${direction * 34}px,48px,0) scale(.94)`
         card.style.filter = 'blur(18px) brightness(.72) saturate(.7)'
         card.style.clipPath = 'inset(10% 8% 10% 8%)'
@@ -428,10 +450,13 @@ function Reviews() {
       if (!entry.isIntersecting) return
       headingObserver.disconnect()
       headingParts.forEach((part, index) => {
-        play(part, [
+        play(part, isMobile ? [
+          { transform: 'translate3d(0,12px,0)' },
+          { transform: 'translate3d(0,0,0)' },
+        ] : [
           { transform: 'translate3d(0,34px,0)', filter: 'blur(10px)', clipPath: 'inset(0 0 24% 0)' },
           { transform: 'translate3d(0,0,0)', filter: 'blur(0)', clipPath: 'inset(0 0 0 0)' },
-        ], { duration: 900, delay: index * 110, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' }, {
+        ], { duration: isMobile ? 380 : 900, delay: index * (isMobile ? 35 : 110), easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' }, {
           transform: 'none', filter: 'none', clipPath: 'inset(0 0 0 0)',
         })
       })
@@ -442,15 +467,15 @@ function Reviews() {
       cardsObserver.disconnect()
       revealOrder.forEach((card, index) => {
         const direction = directions.get(card) ?? 1
-        const delay = index * (isCarousel ? 180 : 520)
-        const frames: Keyframe[] = reducedMotion
-          ? [{ opacity: 0 }, { opacity: 1 }]
+        const delay = index * (isMobile ? 45 : isCarousel ? 180 : 520)
+        const frames: Keyframe[] = isMobile
+          ? [{ opacity: 0, transform: 'translate3d(0,12px,0)' }, { opacity: 1, transform: 'translate3d(0,0,0)' }]
           : [
               { opacity: 0, transform: `translate3d(${direction * 34}px,48px,0) scale(.94)`, filter: 'blur(18px) brightness(.72) saturate(.7)', clipPath: 'inset(10% 8% 10% 8%)' },
               { opacity: 1, transform: 'translate3d(0,0,0) scale(1)', filter: 'blur(0) brightness(1) saturate(1)', clipPath: 'inset(0 0 0 0)' },
             ]
         play(card, frames, {
-          duration: reducedMotion ? 520 : 980,
+          duration: isMobile ? 400 : 980,
           delay,
           easing: 'cubic-bezier(.16,1,.3,1)',
           fill: 'both',
